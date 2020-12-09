@@ -8,7 +8,7 @@ Currently it includes two modules, both of which are designed to run in your con
 
   The second module displays the base64 representation of the most recently available photo of the location using Air Services Australia weather cameras.
 
-Currently the app is being tested on Toowoomba Wellcamp Airport.
+Currently the app is being tested on data from Toowoomba Wellcamp Airport.
 
 From Wikipedia: Toowoomba Wellcamp Airport (IATA: WTB, ICAO: YBWW) is an airport in Wellcamp,
 8.4 nautical miles (15.6 km; 9.7 mi) west from the CBD of Toowoomba, Queensland, Australia. 
