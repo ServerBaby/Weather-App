@@ -1,10 +1,14 @@
 # Weather-App
 
-This program is designed to display the current weather conditions at a specific location using Bureau of Meteorology (BOM) data.
+This app is designed to display the current weather conditions at a specific location 
 
-The program is designed to run in your console/terminal.
+Currently it includes two modules, both of which are designed to run in your console/terminal.
 
-It is currently set up to display the most recent weather conditions at Toowoomba Wellcamp Airport.
+  The first module displays details of the most recently available weather conditions using Bureau of Meteorology (BOM) data.
+
+  The second module displays the base64 representation of the most recently available photo of the location using Air Services Australia weather cameras.
+
+Currently the app is being tested on Toowoomba Wellcamp Airport.
 
 From Wikipedia: Toowoomba Wellcamp Airport (IATA: WTB, ICAO: YBWW) is an airport in Wellcamp,
 8.4 nautical miles (15.6 km; 9.7 mi) west from the CBD of Toowoomba, Queensland, Australia. 
