@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 import requests # to get image from the web
 import shutil   # to save file locally
 import base64   # to convert the jpg to base64
