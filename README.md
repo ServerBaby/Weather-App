@@ -2,11 +2,13 @@
 
 This app is designed to display the current weather conditions at a specific location 
 
-Currently it includes two modules, both of which are designed to run in your console/terminal.
+Currently it includes four modules, which are designed to run in your console/terminal.
 
   The first module displays details of the most recently available weather conditions using Bureau of Meteorology (BOM) data.
 
   The second module displays the base64 representation of the most recently available photo of the location using Air Services Australia weather cameras.
+  
+  The third and fourth modules replicate the second module but splits the second module into a helper module that contains the function to download the base64 representation of any online jpg file and a separate module that just contains the target URL that holds the image.
 
 Currently the app is being tested on data from Toowoomba Wellcamp Airport.
 
