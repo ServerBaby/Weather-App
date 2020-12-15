@@ -1,5 +1,8 @@
 #!/usr/bin/env python3
 
+""" NOTE: THIS IS A DRAFT ONLY VERSION OF THIS FILE """
+
+
 """Download BOM Data and convert to JSON
 
 This script allows the user to download the most recently available
