@@ -2,12 +2,13 @@
 
 """ NOTE: THIS IS A DRAFT ONLY VERSION OF THIS FILE """
 
-
-"""Download BOM Data and convert to JSON
+"""Download and manipulate BOM Data
 
 This script allows the user to download the most recently available
 weather conditions for a specific location from the Bureau of
-Meteorology (BOM) website.
+Meteorology (BOM) website, manipulate that data including adding
+a base64 encoded image of the location at that time, and then converts
+that data back into json format.
 
 Currently being tested on data from Toowoomba Wellcamp Airport.
 `http://www.bom.gov.au/fwo/IDQ60801/IDQ60801.99435.json`
@@ -17,16 +18,26 @@ Python environment you are running this script in.  These modules are
 `requests` to access online content, `json` to convert data to and from
 json format, and `datetime` to change how dates & times are displayed.
 
-This file can also be imported as a module and contains the following
-functions:
+This script also requires two accompanying custom modules be installed.
+These modules are: `dl_img_conv_b64` (to download an image and convert
+to base64) and `image_url` (containing the link to the most recent
+image taken at the target location, in this case, Toowoomba Wellcamp
+Airport).
+
+The dl_data python file can be imported as a module and contains the
+following functions:
 
     * __init__ - to construct the main function
     * dl_weather - returns the BOM data as a dictionary in JSON format
+    * dl_time - extracts a "pretty" version of the local time from the
+        BOM data
 """
 
 import requests
 import json
 import datetime
+import dl_img_conv_b64
+# import image_url
 
 bom_url = "http://www.bom.gov.au/fwo/IDQ60801/IDQ60801.99435.json"
 
@@ -51,6 +62,9 @@ class DownloadData:
         as a dictionary, adds to that dictionary the base64
         representation of an image that is the current view of that
         location
+     'dl_time(bom_url)'
+        Extracts the time that the most recent weather conditions data
+        was uploaded and returns it in a neat, human readable format.
     """
 
     def __init__(self):
@@ -64,25 +78,22 @@ class DownloadData:
     def dl_weather(self, bom_url):
 
         # Gets information from website and turns it into a usable format
-        x = requests.get(bom_url)
-        y = json.loads(x.text)["observations"]["data"]
-
         # [0] is the position of the most recent dataset inserted into the list of datasets ["data"]
-        z = y[0]
+        x = requests.get(bom_url)
+        y = json.loads(x.text)["observations"]["data"][0]
 
         # Removes the unnecessary "sort order" value;
-        z.pop("sort_order", None)
+        y.pop("sort_order", None)
 
-        return str(z)
+        return str(y)
 
     def dl_time(self, bom_url):
         # defined in previous function
         x = requests.get(bom_url)
-        y = json.loads(x.text)["observations"]["data"]
-        z = y[0]
+        y = json.loads(x.text)["observations"]["data"][0]["local_date_time_full"]
 
         # Creates a heading for displaying the current dataset with it's time as part of the heading
-        t1 = datetime.datetime.strptime(z["local_date_time_full"], "%Y%m%d%H%M%S")
+        t1 = datetime.datetime.strptime(y, "%Y%m%d%H%M%S")
         t2 = datetime.datetime.strftime(t1, '%A, %d %B %Y %H:%M:%S')
 
         # prints the local time that the data was uploaded to the BOM website
@@ -117,4 +128,7 @@ if __name__ == "__main__":
 
     output_weather = DownloadData().dl_weather(bom_url)
     output_time = DownloadData().dl_time(bom_url)
+    image_url = "https://weathercams.airservicesaustralia.com/wp-content/uploads/airports/041529/041529_045.jpg"
+    output_image = dl_img_conv_b64.DownloadConvert().conv_img_to_b64(image_url)
     print(output_time + "\n" + output_weather)
+    print(output_image)
