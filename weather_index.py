@@ -28,7 +28,7 @@ def create_index(es_object, index_name):
             "number_of_replicas": 0
         },
         "mappings": {
-            "properties": {
+            "weather_properties": {
                 "date_uploaded": {"type": "date"},
                 "original_image_filename": {"type": "text"},
                 "source_json_url": {"type": "text"},
@@ -114,24 +114,18 @@ def connect_elasticsearch():
 
 
 def get_data():
-    weather_data = DownloadData().dl_weather(data_url, image_url)
-
-# what happens if data download fails???
+    weather_data = {}
+    # what happens if data download fails???
     try:
-
-        pass
-#        r = requests.get(u)
-
-#        if [what??????]:
-#            what?????
-
-#            ???? = weather_data
+        weather_data = DownloadData().dl_weather(data_url, image_url)
+        print('Data downloaded successfully')
 
     except Exception as ex:
         print('Exception while getting data')
         print(str(ex))
+
     finally:
-        return json.dumps(weather_data)     # (?????) goes in here
+        return json.dumps(weather_data)
 
 
 if __name__ == '__main__':
@@ -144,10 +138,10 @@ if __name__ == '__main__':
             out = store_record(es, 'current_weather', result)
             print('Data indexed successfully')
 
-    es = connect_elasticsearch()
+#    es = connect_elasticsearch()
     if es is not None:
-        # search_object = {'query': {'match': {'calories': '102'}}}
-        search_object = {'_source': ['local_date_time_full'],
-                         'query': {'match': {'cloud': 'partly cloudy'}}}
+        search_object = {'query': {'match': {'cloud': 'partly cloudy'}}}
+        # search_object = {'_source': ['local_date_time_full'],
+        # 'query': {'match': {'cloud': 'Partly cloudy'}}}
         # search_object = {'_source': ['title'], 'query': {'range': {'calories': {'gte': 20}}}}
         search(es, 'current_weather', json.dumps(search_object))
