@@ -1,6 +1,9 @@
 #!/usr/bin/env python3
 
 """ NOTE: THIS IS A DRAFT ONLY VERSION OF THIS FILE """
+""" linked modules not all uploaded yet so don't try to run """
+
+#!/usr/bin/env python3
 
 """Download and manipulate BOM Data
 
@@ -37,9 +40,7 @@ import requests
 import json
 import datetime
 import dl_img_conv_b64
-# import image_url
-
-bom_url = "http://www.bom.gov.au/fwo/IDQ60801/IDQ60801.99435.json"
+from wellcamp_urls import image_url, data_url
 
 
 class DownloadData:
@@ -51,18 +52,18 @@ class DownloadData:
 
     Attributes
     ----------
-    'bom_url' : str
+    'data_url' : str
         The URL of the data to be downloaded from the BOM website
         Defined outside of the scope of the class.
 
     Methods
     -------
-    'dl_weather(bom_url)'
+    'dl_weather(data_url)'
         Downloads the most recent weather conditions at a set location
         as a dictionary, adds to that dictionary the base64
         representation of an image that is the current view of that
         location
-     'dl_time(bom_url)'
+     'dl_time(data_url)'
         Extracts the time that the most recent weather conditions data
         was uploaded and returns it in a neat, human readable format.
     """
@@ -75,11 +76,11 @@ class DownloadData:
 
         pass
 
-    def dl_weather(self, bom_url):
+    def dl_weather(self, data_url):
 
         # Gets information from website and turns it into a usable format
         # [0] is the position of the most recent dataset inserted into the list of datasets ["data"]
-        x = requests.get(bom_url)
+        x = requests.get(data_url)
         y = json.loads(x.text)["observations"]["data"][0]
 
         # Removes the unnecessary "sort order" value;
@@ -87,9 +88,9 @@ class DownloadData:
 
         return str(y)
 
-    def dl_time(self, bom_url):
+    def dl_time(self, data_url):
         # defined in previous function
-        x = requests.get(bom_url)
+        x = requests.get(data_url)
         y = json.loads(x.text)["observations"]["data"][0]["local_date_time_full"]
 
         # Creates a heading for displaying the current dataset with it's time as part of the heading
@@ -121,14 +122,14 @@ if __name__ == "__main__":
 
     Methods
     -------
-    dl_weather(bom_url)
+    dl_weather(data_url)
         Downloads an online image, then converts it to Base64 and then 
         returns the result.
     """
 
-    output_weather = DownloadData().dl_weather(bom_url)
-    output_time = DownloadData().dl_time(bom_url)
-    image_url = "https://weathercams.airservicesaustralia.com/wp-content/uploads/airports/041529/041529_045.jpg"
+    output_weather = DownloadData().dl_weather(data_url)
+    output_time = DownloadData().dl_time(data_url)
     output_image = dl_img_conv_b64.DownloadConvert().conv_img_to_b64(image_url)
     print(output_time + "\n" + output_weather)
     print(output_image)
+#    print(data_url)
