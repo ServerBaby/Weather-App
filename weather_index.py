@@ -28,51 +28,43 @@ def create_index(es_object, index_name):
             "number_of_replicas": 0
         },
         "mappings": {
-            "weather_properties": {
-                "date_uploaded": {"type": "date"},
-                "original_image_filename": {"type": "text"},
-                "source_json_url": {"type": "text"},
-                "image_base64": {"type": "text"},
-                "text_description": {"type": "text"},
-                "image_hash": {"type": "text"},
-                "observation": {
-                    "properties": {
-                        "wmo": {"type": "integer"},
-                        "name": {"type": "text"},
-                        "history_product": {"type": "text"},
-                        "local_date_time": {"type": "text"},
-                        "local_date_time_full": {"type": "date"},
-                        "aifstime_utc": {"type": "date"},
-                        "lat": {"type": "float"},
-                        "lon": {"type": "float"},
-                        "apparent_t": {"type": "float"},
-                        "cloud": {"type": "text"},
-                        "cloud_base_m": {"type": "text"},
-                        "cloud_oktas": {"type": "integer"},
-                        "cloud_type": {"type": "text"},
-                        "cloud_type_id": {"type": "text"},
-                        "delta_t": {"type": "float"},
-                        "gust_kmh": {"type": "integer"},
-                        "gust_kt": {"type": "integer"},
-                        "air_temp": {"type": "float"},
-                        "dewpt": {"type": "float"},
-                        "press": {"type": "float"},
-                        "press_msl": {"type": "float"},
-                        "press_qnh": {"type": "float"},
-                        "press_tend": {"type": "text"},
-                        "rain_trace": {"type": "float"},
-                        "rel_hum": {"type": "integer"},
-                        "sea_state": {"type": "text"},
-                        "swell_dir_worded": {"type": "text"},
-                        "swell_height": {"type": "text"},
-                        "swell_period": {"type": "text"},
-                        "vis_km": {"type": "text"},
-                        "weather": {"type": "text"},
-                        "wind_dir": {"type": "keyword"},
-                        "wind_spd_kmh": {"type": "integer"},
-                        "wind_spd_kt": {"type": "integer"}
-
-                    }
+            "observation": {
+                "properties": {
+                    "wmo": {"type": "integer"},
+                    "name": {"type": "text"},
+                    "history_product": {"type": "text"},
+                    "local_date_time": {"type": "text"},
+                    "local_date_time_full": {"type": "date"},
+                    "aifstime_utc": {"type": "date"},
+                    "lat": {"type": "float"},
+                    "lon": {"type": "float"},
+                    "apparent_t": {"type": "float"},
+                    "cloud": {"type": "text"},
+                    "cloud_base_m": {"type": "text"},
+                    "cloud_oktas": {"type": "integer"},
+                    "cloud_type": {"type": "text"},
+                    "cloud_type_id": {"type": "text"},
+                    "delta_t": {"type": "float"},
+                    "gust_kmh": {"type": "integer"},
+                    "gust_kt": {"type": "integer"},
+                    "air_temp": {"type": "float"},
+                    "dewpt": {"type": "float"},
+                    "press": {"type": "float"},
+                    "press_msl": {"type": "float"},
+                    "press_qnh": {"type": "float"},
+                    "press_tend": {"type": "text"},
+                    "rain_trace": {"type": "float"},
+                    "rel_hum": {"type": "integer"},
+                    "sea_state": {"type": "text"},
+                    "swell_dir_worded": {"type": "text"},
+                    "swell_height": {"type": "text"},
+                    "swell_period": {"type": "text"},
+                    "vis_km": {"type": "text"},
+                    "weather": {"type": "text"},
+                    "wind_dir": {"type": "keyword"},
+                    "wind_spd_kmh": {"type": "integer"},
+                    "wind_spd_kt": {"type": "integer"},
+                    "local_image_b64": {"type": "text"}
                 }
             }
         }
@@ -93,7 +85,7 @@ def create_index(es_object, index_name):
 def store_record(elastic_object, index_name, record):
     is_stored = True
     try:
-        outcome = elastic_object.index(index=index_name, doc_type='properties', body=record)
+        outcome = elastic_object.index(index=index_name, doc_type='observation', body=record)
         print(outcome)
     except Exception as ex:
         print('Error in indexing data')
@@ -132,16 +124,16 @@ if __name__ == '__main__':
     logging.basicConfig(level=logging.ERROR)
 
     es = connect_elasticsearch()
+
     result = get_data()
     if es is not None:
-        if create_index(es, 'current_weather'):
-            out = store_record(es, 'current_weather', result)
+        if create_index(es, 'weather_index'):
+            out = store_record(es, 'weather_index', result)
             print('Data indexed successfully')
 
-#    es = connect_elasticsearch()
-    if es is not None:
-        search_object = {'query': {'match': {'cloud': 'partly cloudy'}}}
+#    if es is not None:
+#        search_object = {'query': {'match': {'cloud': 'partly cloudy'}}}
         # search_object = {'_source': ['local_date_time_full'],
         # 'query': {'match': {'cloud': 'Partly cloudy'}}}
         # search_object = {'_source': ['title'], 'query': {'range': {'calories': {'gte': 20}}}}
-        search(es, 'current_weather', json.dumps(search_object))
+#        search(es, 'current_weather', json.dumps(search_object))
