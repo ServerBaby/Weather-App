@@ -8,7 +8,7 @@ and convert it into base64 encoding.
 This tool is currently confirmed to work on jpg and png files.
 
 This script requires that several pypi modules be installed within the 
-Pythonenvironment you are running this script in.  These modules are 
+Python environment you are running this script in.  These modules are
 `requests` to access online content, `shutil` to save the image locally
 on your device, and `base64` to do the encoding of the binary data of 
 the image into base64.
