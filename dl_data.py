@@ -98,17 +98,47 @@ class DownloadData:
             The URL of the image to be downloaded from AirServiceAus site
             Defined outside of the scope of the class.
 
+
+        `returned_object` : file-like object
+            Object containing the image URL server's response to the HTTP
+            GET request.  `raw` is used to create a file-like object
+            representation of the response. Use of raw requires that
+            stream=True be set on the request. stream=True guarantees no
+            interruptions while downloading the image, avoiding corruption
+            of the object being downloaded. Setting decode_content=True
+            forces the decompression of the response.raw file-like object.
+
+        `result` : str [in utf-8 format]
+            The string representation of the base64 encoded image.
+            Encoded into utf-8 format to return string without the [b' '].
+
+        Raises
+        ------
+        status.code if/else statement:
+            Checks if image was retrieved successfully (HTTP Status = 200).
+            If image download fails, (HTTP status code != 200), an error
+            message is printed in the console.
         """
+
+        x = requests.get(data_url)
+
         # Gets information from website and turns it into a usable format
         # [0] is the position of the most recent dataset inserted into the list of datasets ["data"]
-        x = requests.get(data_url)
-        y = json.loads(x.text)["observations"]["data"][0]
-        # adds base64 image to data
-        y.update(local_image_b64=dl_img_conv_b64.DownloadConvert().conv_img_to_b64(image_url))
-        # Removes the unnecessary "sort order" value;
-        y.pop("sort_order", None)
 
-        return str(y)
+        if x.status_code == 200:
+
+            y = json.loads(x.text)["observations"]["data"][0]
+            # adds base64 image to data
+            y.update(local_image_b64=dl_img_conv_b64.DownloadConvert().conv_img_to_b64(image_url))
+            # Removes the unnecessary "sort order" value;
+            y.pop("sort_order", None)
+
+            result = str(y)
+
+        else:
+            result = str('Data Couldn\'t be retrieved')
+
+        return result
 
     def dl_time(self, data_url):
         # defined in previous function
