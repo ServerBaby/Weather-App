@@ -2,6 +2,10 @@
 
 """ NOTE: THIS IS A DRAFT ONLY VERSION OF THIS FILE
 linked modules not all uploaded yet so don't try to run """
+#!/usr/bin/env python3
+
+""" NOTE: THIS IS A DRAFT ONLY VERSION OF THIS FILE
+linked modules not all uploaded yet so don't try to run """
 
 import json
 import logging
@@ -22,7 +26,7 @@ def search(es_object, index_name, search):
 def create_index(es_object, index_name):
     created = False
     # index settings
-    settings = {
+    var_to_name = {
         "settings": {
             "number_of_shards": 1,
             "number_of_replicas": 0
@@ -73,7 +77,7 @@ def create_index(es_object, index_name):
     try:
         if not es_object.indices.exists(index_name):
             # Ignore 400 means to ignore "Index Already Exist" error.
-            es_object.indices.create(index=index_name, ignore=400, body=settings)
+            es_object.indices.create(index=index_name, ignore=400, body=var_to_name)
             print('Created Index')
         created = True
     except Exception as ex:
@@ -85,7 +89,7 @@ def create_index(es_object, index_name):
 def store_record(elastic_object, index_name, record):
     is_stored = True
     try:
-        outcome = elastic_object.index(index=index_name, doc_type='observation', body=record)
+        outcome = elastic_object.index(index=index_name, id=0, body=record)  # doc_type='observation',
         print(outcome)
     except Exception as ex:
         print('Error in indexing data')
@@ -115,25 +119,29 @@ def get_data():
     except Exception as ex:
         print('Exception while getting data')
         print(str(ex))
+        print("ERROR: " + str(ex.info))
 
     finally:
-        return json.dumps(weather_data)
+        return weather_data
 
 
 if __name__ == '__main__':
     logging.basicConfig(level=logging.ERROR)
 
+    # connect to elasticsearch
     es = connect_elasticsearch()
 
-    result = get_data()
+    # Get data from website:
+    result = eval(str(get_data()))
+    # create index and stick data in it?
     if es is not None:
         if create_index(es, 'weather_index'):
             out = store_record(es, 'weather_index', result)
             print('Data indexed successfully')
 
-#    if es is not None:
-#        search_object = {'query': {'match': {'cloud': 'partly cloudy'}}}
-        # search_object = {'_source': ['local_date_time_full'],
-        # 'query': {'match': {'cloud': 'Partly cloudy'}}}
+    if es is not None:
+        # search_object = {'query': {'match': {'cloud': 'partly cloudy'}}}
+        search_object = {'_source': ['local_date_time_full'],
+                         'query': {'range': {'wmo': {'gte': 20}}}}
         # search_object = {'_source': ['title'], 'query': {'range': {'calories': {'gte': 20}}}}
-#        search(es, 'current_weather', json.dumps(search_object))
+        search(es, 'current_weather', json.dumps(search_object))
