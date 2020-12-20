@@ -1,21 +1,15 @@
 #!/usr/bin/env python3
 
-""" NOTE: THIS IS A DRAFT ONLY VERSION OF THIS FILE
-linked modules not all uploaded yet so don't try to run """
-#!/usr/bin/env python3
-
-""" NOTE: THIS IS A DRAFT ONLY VERSION OF THIS FILE
-linked modules not all uploaded yet so don't try to run """
+""" NOTE: THIS IS A DRAFT ONLY VERSION OF THIS FILE """
 
 import json
 import logging
-from dl_data import *
-
 from pprint import pprint
-from time import sleep
-
 import requests
 from elasticsearch import Elasticsearch
+from dl_data import *
+
+# from time import sleep
 
 
 def search(es_object, index_name, search):
@@ -141,7 +135,8 @@ if __name__ == '__main__':
 
     if es is not None:
         # search_object = {'query': {'match': {'cloud': 'partly cloudy'}}}
+        # search_object = {'_source': ['local_date_time_full'],
+        #                 'query': {'match': {'wmo': 99435}}}
         search_object = {'_source': ['local_date_time_full'],
-                         'query': {'range': {'wmo': {'gte': 20}}}}
-        # search_object = {'_source': ['title'], 'query': {'range': {'calories': {'gte': 20}}}}
-        search(es, 'current_weather', json.dumps(search_object))
+                         'query': {'range': {'air_temp': {'gte': 20}}}}
+        search(es, 'weather_index', json.dumps(search_object))
