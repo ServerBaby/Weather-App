@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
-""" NOTE: THIS IS A DRAFT ONLY VERSION OF THIS FILE """
+""" NOTE: THIS IS A DRAFT ONLY VERSION OF THIS FILE
+linked modules not all uploaded yet so don't try to run """
 
 import json
 import logging
@@ -83,7 +84,7 @@ def create_index(es_object, index_name):
 def store_record(elastic_object, index_name, record):
     is_stored = True
     try:
-        outcome = elastic_object.index(index=index_name, id=0, body=record)  # doc_type='observation',
+        outcome = elastic_object.index(index=index_name, id=my_id, body=record)  # doc_type='observation',
         print(outcome)
     except Exception as ex:
         print('Error in indexing data')
@@ -127,16 +128,19 @@ if __name__ == '__main__':
 
     # Get data from website:
     result = eval(str(get_data()))
+
     # create index and stick data in it?
+    my_id = (str(result['local_date_time_full']))
     if es is not None:
         if create_index(es, 'weather_index'):
             out = store_record(es, 'weather_index', result)
             print('Data indexed successfully')
 
+    # Searches for stuff, currently searching air_temp greater or equal to 25 degrees
     if es is not None:
         # search_object = {'query': {'match': {'cloud': 'partly cloudy'}}}
         # search_object = {'_source': ['local_date_time_full'],
         #                 'query': {'match': {'wmo': 99435}}}
         search_object = {'_source': ['local_date_time_full'],
-                         'query': {'range': {'air_temp': {'gte': 20}}}}
+                         'query': {'range': {'air_temp': {'gte': 25}}}}
         search(es, 'weather_index', json.dumps(search_object))
