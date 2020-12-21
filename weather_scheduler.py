@@ -134,25 +134,21 @@ def new_download():
                 print('Index ' + str(my_id) + ' created\n')
                 return out
     except Exception as ex:
-        print('Error in creating record x')
+        print('Error in creating record' + str(my_id))
         print(str(ex))
 
 
 if __name__ == '__main__':
     logging.basicConfig(level=logging.ERROR)
 
-    # connect to elasticsearch
-    es = connect_elasticsearch()
-
     scheduler = BlockingScheduler()
     scheduler.add_executor('processpool')
-    scheduler.add_job(new_download, 'interval', seconds=10, misfire_grace_time=2)
+    scheduler.add_job(new_download, 'interval', seconds=60, misfire_grace_time=3)
     print('Press Ctrl+C to exit')
 
     try:
         scheduler.start()
     except (KeyboardInterrupt, SystemExit):
         pass
-
 
 
