@@ -1,11 +1,13 @@
 #!/usr/bin/env python3
 
-
 """ Toowoomba Wellcamp Airport URLs
 
 This file is just a list of relevant URLs for use in the weather app.
 Specifically, this file contains the URLs for the data from
-Toowoomba Wellcamp Airport
+Toowoomba Wellcamp Airport.  The data URL can be changed to any of the
+Bureau of Meteorology pages containing location specific weather 
+conditions in JSON format and the image URL can be changed to any 
+relevant URL containing an image file.
 
 Description of Toowoomba Wellcamp Airport for interest:
 
