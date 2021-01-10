@@ -20,8 +20,11 @@ This is a file containing a list of relevant URLs for use in the weather app. Sp
 
 
 Modules that have been superseded by the above files:
+
 image_url.py – superseded by wellcamp_urls.py 
+
 weather_app.py – superseded by dl_data.py
+
 weather_app_photo.py – superseded by dl_img_conv_b64.py 
 
 
