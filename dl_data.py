@@ -1,9 +1,5 @@
 #!/usr/bin/env python3
 
-""" NOTE: THIS IS A DRAFT ONLY VERSION OF THIS FILE """
-""" linked modules not all uploaded yet so don't try to run """
-#!/usr/bin/env python3
-
 """Download and manipulate BOM Data
 
 This script allows the user to download the most recently available
@@ -45,7 +41,6 @@ class DownloadData:
     """
     A class to download the most recent weather conditions at a
     specific location.  Output in json format.
-
 
     ...
 
