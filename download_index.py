@@ -6,8 +6,11 @@ This script allows the user to download and save the contents of the user's
 elasticSearch index to a text file.  Can be used as a back up if data is lost
 or deleted.
 
-This script requires the elasticsearch module from Pypi be installed within
-the Python environment you are running this script in.
+This script requires two modules from Pypi be installed within the Python 
+environment you are running this script in. The two modules are elasticsearch 
+and json.  elasticsearch module is used to access the data from an 
+Elasticsearch index, and json module is used to transform the data into the
+correct format.
 
 This script currently contains two options:
 1. Option 1 downloads the content of the Elasticsearch documents as a list
@@ -16,6 +19,7 @@ This script currently contains two options:
 
 """
 import elasticsearch
+import json
 
 """
 Connects to the ElasticSearch server
@@ -72,6 +76,6 @@ with open(filename, 'a') as f:
 	""" Option 2 """
 	try:
 		for hit in es_documents:
-			f.write("POST /weather_index/_doc/" + str(hit["_id"]) + '\n' + str(hit["_source"]) + '\n\n')
+			f.write("POST /weather_index/_doc/" + str(hit["_id"]) + '\n' + str(json.dumps(hit["_source"])) + '\n\n')
 	except Exception:
 		f.write("Error while downloading")
