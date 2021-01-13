@@ -46,20 +46,25 @@ res = es.search(index="weather_index", body={
 es_documents = res['hits']['hits']
 
 """
+Can change name of the txt file data is saved to
+"""
+filename = "weather_save_4.txt"
+
+"""
 Prints the number of elastic search documents ["hits"] to the console.
 Not the same number of documents that will be downloaded if the number of documents 
 is greater than the number of documents specified in the query above.
 """
-print("Got %d hits. Saving to file \'weather_save.txt\'" % res['hits']['total']['value'])
+print("Got %d hits" % res['hits']['total']['value'])
+print("Saving to file: " + filename)
 
 """
 Saves elastic search documents to file:
 First option saves the documents as a list,
 Second option saves the documents as the text of a command that can be copied and pasted into 
 Kibana Dev Tools to re-add the documents back into the index
-Can change name of the txt file data is saved to
 """
-with open('weather_save.txt', 'a') as f:
+with open(filename, 'a') as f:
 	# 'a' appends it to txt doc if it already exists rather than overwriting it
 	# Can replace 'a' with 'w' if you wish to overwrite existing data
 	""" Option 1 """
@@ -67,6 +72,6 @@ with open('weather_save.txt', 'a') as f:
 	""" Option 2 """
 	try:
 		for hit in es_documents:
-			f.write("POST weather_index " + str(hit) + '\n\n')
+			f.write("POST /weather_index/_doc/" + str(hit["_id"]) + '\n' + str(hit["_source"]) + '\n\n')
 	except Exception:
 		f.write("Error while downloading")
