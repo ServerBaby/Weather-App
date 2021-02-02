@@ -9,9 +9,9 @@ from pprint import pprint
 import requests
 from elasticsearch import Elasticsearch
 from datetime import datetime
+import time
 from apscheduler.schedulers.blocking import BlockingScheduler
-from dl_data import *
-# from time import sleep
+from dl_data_extra_field import *
 
 
 def create_index(es_object, index_name):
@@ -28,8 +28,8 @@ def create_index(es_object, index_name):
                     "wmo": {"type": "integer"},
                     "name": {"type": "text"},
                     "history_product": {"type": "text"},
-                    "local_date_time": {"type": "text"},
-                    "local_date_time_full": {"type": "date"},
+                    "local_date_time": {"type": "date"},
+                    "local_date_time_full": {"type": "text"},
                     "aifstime_utc": {"type": "date"},
                     "lat": {"type": "float"},
                     "lon": {"type": "float"},
@@ -59,6 +59,7 @@ def create_index(es_object, index_name):
                     "wind_dir": {"type": "keyword"},
                     "wind_spd_kmh": {"type": "integer"},
                     "wind_spd_kt": {"type": "integer"},
+                    "epoch_date": {"type": "date"},
                     "local_image_b64": {"type": "text"}
                 }
             }
@@ -84,7 +85,7 @@ def store_record(elastic_object, index_name, record):
         my_id = str((result['local_date_time_full']))
         elastic_object.index(index=index_name, id=my_id, body=record)  # doc_type='observation',
         # id=my_id,
-#        print(outcome)
+        #        print(outcome)
         print('Data indexed successfully')
     except Exception as ex:
         print('Error in indexing data')
@@ -143,12 +144,12 @@ if __name__ == '__main__':
 
     scheduler = BlockingScheduler()
     scheduler.add_executor('processpool')
-    scheduler.add_job(new_download, 'interval', seconds=60, misfire_grace_time=3)
+    scheduler.add_job(new_download, 'interval', seconds=300, misfire_grace_time=30)
+    # seconds=900 is 15 minutes; acts as default in case first firing misses
     print('Press Ctrl+C to exit')
 
     try:
         scheduler.start()
     except (KeyboardInterrupt, SystemExit):
         pass
-
 
