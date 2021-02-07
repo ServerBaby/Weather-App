@@ -26,13 +26,16 @@ following functions:
 
     * __init__ - to construct the main function
     * dl_weather - returns the data as a dictionary in JSON format
-    * dl_time - extracts a human-readable version of the local time
+    * dl_time_local - extracts a human-readable version of the local time
         from the BOM data
+    * dl_time_utc - extracts the time from the BOM data and expresses it
+        as seconds from epoch.
 """
 
 import requests
 import json
 import datetime
+import time
 import dl_img_conv_b64
 from wellcamp_urls import image_url, data_url
 
@@ -123,6 +126,8 @@ class DownloadData:
         if x.status_code == 200:
 
             y = json.loads(x.text)["observations"]["data"][0]
+            # converts utc time to seconds since epoch
+            y.update(epoch_date=1000*int(eval((self.dl_time_utc(data_url)))))
             # adds base64 image to data
             y.update(local_image_b64=dl_img_conv_b64.DownloadConvert().conv_img_to_b64(image_url))
             # Removes the unnecessary "sort order" value;
@@ -135,17 +140,31 @@ class DownloadData:
 
         return result
 
-    def dl_time(self, data_url):
+    def dl_time_local(self, data_url):
         # defined in previous function
         x = requests.get(data_url)
         y = json.loads(x.text)["observations"]["data"][0]["local_date_time_full"]
 
-        # Creates a heading for displaying the current dataset with it's time as part of the heading
-        t1 = datetime.datetime.strptime(y, "%Y%m%d%H%M%S")
-        t2 = datetime.datetime.strftime(t1, '%A, %d %B %Y %H:%M:%S')
+        # Creates a heading for displaying the current dataset with its time as part of the heading
+        dd = datetime.datetime
+        t_strp_local = dd.strptime(y, "%Y%m%d%H%M%S")
+        t_local = dd.strftime(t_strp_local, '%A, %d %B %Y %H:%M:%S')
 
         # prints the local time that the data was uploaded to the BOM website
-        return t2
+        return t_local
+
+    def dl_time_utc(self, data_url):
+        # defined in previous function
+        x = requests.get(data_url)
+        z = json.loads(x.text)["observations"]["data"][0]["aifstime_utc"]
+
+        # Creates a heading for displaying the current dataset with its time as part of the heading
+        dd = datetime.datetime
+        t_strp_utc = dd.strptime(z, "%Y%m%d%H%M%S")
+        t_tuple_utc = dd.timetuple(t_strp_utc)
+        t_utc = time.mktime(t_tuple_utc)
+        # prints the local time that the data was uploaded to the BOM website
+        return str(t_utc)
 
 
 if __name__ == "__main__":
@@ -174,6 +193,19 @@ if __name__ == "__main__":
         returns the result.
     """
 
+    output_time_local = DownloadData().dl_time_local(data_url)
+    output_time_utc = (DownloadData().dl_time_utc(data_url))
+
+    # Print local time in custom format:
+    print(output_time_local)
+    # Print utc time in seconds since epoch format:
+    print(output_time_utc)
+    # Print utc time in a standard format (to provide a visual confirmation of correct conversion)
+    print(time.asctime(time.gmtime(float(output_time_utc))))
+
+    # To check if new fields were added correctly:
     output_weather = DownloadData().dl_weather(data_url, image_url)
-    output_time = DownloadData().dl_time(data_url)
-    print(output_time + "\n" + output_weather)
+    # Option to print all of the data as a dictionary:
+    print(output_weather)
+    # check that the date and time expressed as seconds since epoch:
+    print(int((eval(output_weather))["epoch_date"]))
