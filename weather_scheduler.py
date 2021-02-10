@@ -9,9 +9,9 @@ from pprint import pprint
 import requests
 from elasticsearch import Elasticsearch
 from datetime import datetime
+import time
 from apscheduler.schedulers.blocking import BlockingScheduler
-from dl_data import *
-# from time import sleep
+from dummy_dl_data import *
 
 
 def create_index(es_object, index_name):
@@ -25,10 +25,11 @@ def create_index(es_object, index_name):
         "mappings": {
             "observation": {
                 "properties": {
+                    "epoch_date": {"type": "date", "format": "epoch_millis"},
                     "wmo": {"type": "integer"},
                     "name": {"type": "text"},
                     "history_product": {"type": "text"},
-                    "local_date_time": {"type": "text"},
+                    "local_date_time": {"type": "date"},
                     "local_date_time_full": {"type": "date"},
                     "aifstime_utc": {"type": "date"},
                     "lat": {"type": "float"},
@@ -80,11 +81,9 @@ def create_index(es_object, index_name):
 def store_record(elastic_object, index_name, record):
     is_stored = True
     try:
-        result = eval(str(get_data()))
+        result = get_data()
         my_id = str((result['local_date_time_full']))
         elastic_object.index(index=index_name, id=my_id, body=record)  # doc_type='observation',
-        # id=my_id,
-#        print(outcome)
         print('Data indexed successfully')
     except Exception as ex:
         print('Error in indexing data')
@@ -97,8 +96,9 @@ def store_record(elastic_object, index_name, record):
 def connect_elasticsearch():
     _es = None
     _es = Elasticsearch([{'host': 'localhost', 'port': 9200}])
+    print('Connecting to Elasticsearch')
     if _es.ping():
-        print('Connected successfully')
+        print('Connected successfully\n')
     else:
         print('Connection failed')
     return _es
@@ -106,10 +106,14 @@ def connect_elasticsearch():
 
 def get_data():
     weather_data = {}
+    print('Connecting to BOM Website')
     # what happens if data download fails???
     try:
         weather_data = DownloadData().dl_weather(data_url, image_url)
-        print('Data downloaded successfully')
+        print('Data downloaded successfully\n')
+        print(type(weather_data['epoch_date']), '\n')
+#        for thing in weather_data:
+ #           print(thing, ', ', type(weather_data[thing]))
 
     except Exception as ex:
         print('Exception while getting data')
@@ -124,6 +128,9 @@ def new_download():
     es = connect_elasticsearch()
     # Get data from website:
     result = eval(str(get_data()))
+    print('epoch_date type: ', type(result['epoch_date']))
+#    for thing in result:
+ #       print(thing, ', ', type(result[thing]))
     #        print(result)
     # create index and stick data in it?
     my_id = str((result['local_date_time_full']))
@@ -143,12 +150,11 @@ if __name__ == '__main__':
 
     scheduler = BlockingScheduler()
     scheduler.add_executor('processpool')
-    scheduler.add_job(new_download, 'interval', seconds=60, misfire_grace_time=3)
-    print('Press Ctrl+C to exit')
+    scheduler.add_job(new_download, 'interval', seconds=300, misfire_grace_time=30)
+    # seconds=900 is 15 minutes; acts as default in case first firing misses
+    print('Starting Weather App\nPress Ctrl+C to exit at any time\n')
 
     try:
         scheduler.start()
     except (KeyboardInterrupt, SystemExit):
         pass
-
-
