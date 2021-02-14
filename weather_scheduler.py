@@ -108,7 +108,7 @@ def get_data():
     try:
         weather_data = DownloadData().dl_weather(data_url, image_url)
         print('Data downloaded successfully\n')
-        print('epoch_date type: ', type(weather_data['epoch_date']), '\n')
+        print('epoch_date type: ', type(weather_data['epoch_date']), '\n')  # test for date type
 
     except Exception as ex:
         print('Exception while getting data')
@@ -123,7 +123,7 @@ def new_download():
     es = connect_elasticsearch()
     # Get data from website:
     result = (get_data())
-    print('epoch_date type: ', type(result['epoch_date']), str(result['epoch_date']))
+    print('epoch_date type: ', type(result['epoch_date']), str(result['epoch_date'])) # test for date type
     global my_id
     my_id = str((result['local_date_time_full']))
     try:
