@@ -11,7 +11,7 @@ from elasticsearch import Elasticsearch
 from datetime import datetime
 import time
 from apscheduler.schedulers.blocking import BlockingScheduler
-from dummy_dl_data import *
+from dl_data import *
 
 
 def create_index(es_object, index_name):
