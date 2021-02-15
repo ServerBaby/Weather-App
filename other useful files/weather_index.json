@@ -1,4 +1,3 @@
-PUT weather_index
 {
   "settings": {
     "index": {
