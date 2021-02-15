@@ -5,13 +5,12 @@ linked modules not all uploaded yet so don't try to run """
 
 import json
 import logging
-from pprint import pprint
 import requests
 from elasticsearch import Elasticsearch
 from datetime import datetime
 import time
 from apscheduler.schedulers.blocking import BlockingScheduler
-from dl_data import *
+from dummy_dl_data import *
 
 
 def create_index(es_object, index_name):
@@ -23,45 +22,43 @@ def create_index(es_object, index_name):
             "number_of_replicas": 0
         },
         "mappings": {
-            "observation": {
                 "properties": {
-                    "epoch_date": {"type": "date", "format": "epoch_millis"},
-                    "wmo": {"type": "integer"},
-                    "name": {"type": "text"},
-                    "history_product": {"type": "text"},
-                    "local_date_time": {"type": "date"},
-                    "local_date_time_full": {"type": "date"},
-                    "aifstime_utc": {"type": "date"},
-                    "lat": {"type": "float"},
-                    "lon": {"type": "float"},
-                    "apparent_t": {"type": "float"},
-                    "cloud": {"type": "text"},
-                    "cloud_base_m": {"type": "text"},
-                    "cloud_oktas": {"type": "integer"},
-                    "cloud_type": {"type": "text"},
-                    "cloud_type_id": {"type": "text"},
-                    "delta_t": {"type": "float"},
-                    "gust_kmh": {"type": "integer"},
-                    "gust_kt": {"type": "integer"},
-                    "air_temp": {"type": "float"},
-                    "dewpt": {"type": "float"},
-                    "press": {"type": "float"},
-                    "press_msl": {"type": "float"},
-                    "press_qnh": {"type": "float"},
-                    "press_tend": {"type": "text"},
-                    "rain_trace": {"type": "float"},
-                    "rel_hum": {"type": "integer"},
-                    "sea_state": {"type": "text"},
-                    "swell_dir_worded": {"type": "text"},
-                    "swell_height": {"type": "text"},
-                    "swell_period": {"type": "text"},
-                    "vis_km": {"type": "text"},
-                    "weather": {"type": "text"},
-                    "wind_dir": {"type": "keyword"},
-                    "wind_spd_kmh": {"type": "integer"},
-                    "wind_spd_kt": {"type": "integer"},
-                    "local_image_b64": {"type": "text"}
-                }
+                "epoch_date": {"type": "date", "format": "epoch_millis"},
+                "wmo": {"type": "integer"},
+                "name": {"type": "text"},
+                "history_product": {"type": "text"},
+                "local_date_time": {"type": "text"},
+                "local_date_time_full": {"type": "text"},
+                "aifstime_utc": {"type": "text"},
+                "lat": {"type": "float"},
+                "lon": {"type": "float"},
+                "apparent_t": {"type": "float"},
+                "cloud": {"type": "text"},
+                "cloud_base_m": {"type": "text"},
+                "cloud_oktas": {"type": "integer"},
+                "cloud_type": {"type": "text"},
+                "cloud_type_id": {"type": "text"},
+                "delta_t": {"type": "float"},
+                "gust_kmh": {"type": "integer"},
+                "gust_kt": {"type": "integer"},
+                "air_temp": {"type": "float"},
+                "dewpt": {"type": "float"},
+                "press": {"type": "float"},
+                "press_msl": {"type": "float"},
+                "press_qnh": {"type": "float"},
+                "press_tend": {"type": "text"},
+                "rain_trace": {"type": "float"},
+                "rel_hum": {"type": "integer"},
+                "sea_state": {"type": "text"},
+                "swell_dir_worded": {"type": "text"},
+                "swell_height": {"type": "text"},
+                "swell_period": {"type": "text"},
+                "vis_km": {"type": "text"},
+                "weather": {"type": "text"},
+                "wind_dir": {"type": "keyword"},
+                "wind_spd_kmh": {"type": "integer"},
+                "wind_spd_kt": {"type": "integer"},
+                "local_image_b64": {"type": "text"}
             }
         }
     }
@@ -108,7 +105,6 @@ def get_data():
     try:
         weather_data = DownloadData().dl_weather(data_url, image_url)
         print('Data downloaded successfully\n')
-        print('epoch_date type: ', type(weather_data['epoch_date']), '\n')  # test for date type
 
     except Exception as ex:
         print('Exception while getting data')
@@ -123,7 +119,6 @@ def new_download():
     es = connect_elasticsearch()
     # Get data from website:
     result = (get_data())
-    print('epoch_date type: ', type(result['epoch_date']), str(result['epoch_date'])) # test for date type
     global my_id
     my_id = str((result['local_date_time_full']))
     try:
