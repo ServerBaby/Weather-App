@@ -65,20 +65,22 @@ class DownloadData:
     -------
     'dl_weather(data_url, image_url)'
         Downloads the most recent weather conditions at a set location
-        as a dictionary, adds to that data the base64 representation of
-        an image that is the current view of that location.
+        as a dictionary; adds to that three key-value pairs: the base64
+        representation of an image that is the current view of that 
+        location (string), UTC time in milliseconds since epoch 
+        (integer), and the wind direction as an angle (float).
     'dl_time_local(data_url)'
         Extracts the time that the most recent weather conditions data
         was uploaded and returns it in a neat, human readable format.
-        dl_time_local - extracts a human-readable version of the local time
-        from the BOM data
-    'dl_time_local(data_url)'
-         extracts the time from the BOM data and expresses it
-        as seconds from epoch.
+        Example: `Monday, 15 February 2021 13:30:00`
+    'dl_time_utc(data_url)'
+        Extracts the time that the most recent weather conditions data
+        was uploaded and returns the value in seconds from epoch.
+        Example: `1613320200.0`
     'dl_wind_angle(data_url)'
-    
-    * def dl_wind_angle - extracts the wind direction from the BOM data 
-        and expresses it as an angle (0-360 degrees).     
+        Extracts the wind direction the most recent weather conditions 
+        data and returns the direction as an angle (0-360 degrees). 
+        Example:  a wind direction of `ESE` returns `112.50`
         
     """
 
