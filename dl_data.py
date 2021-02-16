@@ -93,26 +93,59 @@ class DownloadData:
         pass
 
     def dl_weather(self, data_url, image_url):
+        """
+        Method called upon to create a dictionary of current weather
+        conditions at a specific location.
+        This method downloads the data from the BOM website, extracts
+        the required data and places it into a dictionary, downloads
+        an image from AirServices Australia, converts that image into
+        a base64 encoded string, and then adds that string to the
+        dictionary.
+        ...
+        Parameters
+        ----------
+        'data_url' : str
+           The URL of the data to be downloaded from the BOM website
+           Defined outside of the scope of the class.
+        'image_url' : str
+            The URL of the image to be downloaded from AirServiceAus site
+            Defined outside of the scope of the class.
+        'x' : method
+           A GET request to the specified url.
+        'y' : dictionary (json format)
+            A dictionary containing all of the data including the base64
+            representation of the image, the time in milliseconds since
+            epoch and the wind direction as an angle.  
+            The main output of this module.
+
+        Raises
+        ------
+        status.code if/else statement:
+            Checks if the data from the BOM website was retrieved successfully
+            (HTTP Status = 200). If this download fails, (HTTP status code != 200), 
+            an error message is printed in the console.
+        """
 
         x = requests.get(data_url)
 
-        # Gets information from website and turns it into a usable format
-        # [0] is the position of the most recent dataset inserted into the list of datasets ["data"]
+        # Gets the most recent dataset from BOM website and turns it into a usable format
+        # ["observations"]["data"] is the nested dictionary containing the datasets
+        # [0] is the position of the most recent dataset inserted into the list of datasets 
 
         if x.status_code == 200:
 
             y = json.loads(x.text)["observations"]["data"][0]
 
-            # converts utc time to milli-seconds since epoch and adds it as a new mapping field
+            # converts utc time to milli-seconds since epoch and adds it as a new key-value pair
             y.update(epoch_date=1000*int(eval((self.dl_time_utc(data_url)))))
 
-            # adds wind angle, converted from wind direction, as a new mapping field
+            # converts wind direction to an angle, and adds it as a new key-value pair
             y.update(wind_angle=(self.dl_wind_angle(data_url)))
 
-            # adds base64 image to data
+            # adds base64 image as a new key-value pair
             y.update(local_image_b64=dl_img_conv_b64.DownloadConvert().conv_img_to_b64(image_url))
 
-            # Removes the unnecessary "sort order" value;
+            # Removes the unnecessary "sort order" value [always 0 for most recent dataset]
             y.pop("sort_order", None)
 
             result = y
