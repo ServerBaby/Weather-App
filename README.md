@@ -29,6 +29,15 @@ weather_app_photo.py – superseded by dl_img_conv_b64.py
 weather_index.py – superseded by weather_app.py
 
 
+The other useful files folder contains the following:
+
+weather_index.json - the json file containing the index mapping for the created Elasticsearch Index
+
+key to bom terms.pdf - a key to the meaning of the terms used in the Bureau of Meteorology data
+
+painless_queries.txt - several useful scripts written in the Kibana Query Language "Painless".  Includes several scripts on how to add new fields and how to populate those new fields.
+
+
 Currently the app is being tested on data from Toowoomba Wellcamp Airport.
 
 From Wikipedia: Toowoomba Wellcamp Airport (IATA: WTB, ICAO: YBWW) is an airport in Wellcamp,
