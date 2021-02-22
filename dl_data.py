@@ -184,7 +184,7 @@ class DownloadData:
         'data_url' : str
            URL of the data to be downloaded from the BOM website
            Defined outside of the scope of the class.
-        'local_date_time_full' : dictionary key
+        'local_date_time_full' : string
             Returns the local time that the data was uploaded to the 
             BOM website (in a custom date/time format).
             Defined outside of the scope of the class.
@@ -230,7 +230,7 @@ class DownloadData:
         'data_url' : str
            URL of the data to be downloaded from the BOM website
            Defined outside of the scope of the class.
-        'aifstime_utc' : dictionary key
+        'aifstime_utc' : string
             Returns the UTC time that the data was uploaded to the 
             BOM website (in a custom date/time format).
             Defined outside of the scope of the class.
@@ -280,7 +280,7 @@ class DownloadData:
         'data_url' : str
            URL of the data to be downloaded from the BOM website
            Defined outside of the scope of the class.
-        'wind_dir' : dictionary key
+        'wind_dir' : string
             Defined on the BOM website as: "Wind direction. Direction
             relative to True North, from which the wind is blowing."
             BOM website (in a custom date/time format).
